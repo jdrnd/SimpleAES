@@ -11,8 +11,7 @@ class JCrypt{
 
     uint8_t** blocks;
 
-    uint8_t* toArray(std::string data);
-    void blockify(uint8_t* chars, int size);
+    void blockify(std::string data);
 
 public:
 

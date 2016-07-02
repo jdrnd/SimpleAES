@@ -1,28 +1,31 @@
 #include "jcrypt.h"
 #include <cmath>
+#include <iostream>
 
-JCrypt::~JCrypt() {
+JCrypt::~JCrypt(){
     delete[] blocks;
 }
 
-uint8_t* JCrypt::toArray(std::string data){
-    uint8_t* bytearr = new uint8_t[data.size()];
-    for (int i = 0; i< data.size(); i++){
-        bytearr[i] = (uint8_t)data[i];
-    }
-    return bytearr;
-}
+void JCrypt::blockify(std::string data) {
 
-void JCrypt::blockify(uint8_t *chars, int size) {
-    //
-    double numblocks = ceil(size / 16);
+    double num = ceil((double)data.size() / 16);
+    int size = data.size();
 
-    blocks = new uint8_t*[(int)numblocks];
+    // Create blocks to fill data into
+    blocks = new uint8_t*[(int)num];
 
-    for (int i = 0; i < (int)numblocks; i++ ){
+    for (int i = 0; i < (int)num; i++ ){
+
         blocks[i] = new uint8_t[16];
+
         for (int j = 0; j < 16; j++){
-            blocks[i][j] = chars[(i*16) + j];
+            if ( ((16*i) + j) < size){
+                blocks[i][j] = (uint8_t)data[(16*i) + j];
+            }
+            else{
+                blocks[i][j] = 0;
+            }
+
         }
     }
 }
