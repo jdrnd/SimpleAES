@@ -72,7 +72,7 @@ static const uint8_t* Key;
 
 #if defined(CBC) && CBC
   // Initial Vector used only for CBC mode
-  static uint8_t* Iv;
+  static const uint8_t* Iv;
 #endif
 
 // The lookup-tables are marked const so they can be placed in read-only storage instead of RAM
@@ -433,7 +433,7 @@ static void InvCipher(void)
   AddRoundKey(0);
 }
 
-static void BlockCopy(uint8_t* output, uint8_t* input)
+static void BlockCopy(uint8_t* output, const uint8_t* input)
 {
   uint8_t i;
   for (i=0;i<KEYLEN;++i)
@@ -576,7 +576,47 @@ void AES128_CBC_decrypt_buffer(uint8_t* output, uint8_t* input, uint32_t length,
   }
 }
 
-
+void AES128_CBC_encrypt_buffer16_ip(uint8_t* data, uint32_t length, const uint8_t* key, const uint8_st* iv)
+ {
+   int i;
+ 
+   state = (state_t*)data;
+ 
+   Key = key;
+   KeyExpansion();
+ 
+   Iv = (uint8_t*)iv;
+ 
+   for(i = 0; i < length; i += 16)
+   {
+     XorWithIv(data);
+     state = (state_t*)data;
+     Cipher();
+     Iv = data;
+     data += 16;
+   }
+ }
+ 
+ void AES128_CBC_decrypt_buffer16_ip(uint8_t* data, uint32_t length, const uint8_t* key, const uint8_t* iv)
+ {
+   int i;
+   uint8_t iv_copy[32];
+   
+   Key = key;
+   KeyExpansion();
+ 
+   BlockCopy(iv_copy, iv);
+ 
+   for(i = 0; i < length; i += 16)
+   {
+ 	BlockCopy(&iv_copy[(i + 16) % 32], data);
+     state = (state_t*)data;
+     InvCipher();
+ 	Iv = &iv_copy[i % 32];
+     XorWithIv(data);
+     data += 16;
+   }
+ }
 #endif // #if defined(CBC) && CBC
 
 

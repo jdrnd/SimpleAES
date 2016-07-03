@@ -34,6 +34,31 @@ void JCrypt::blockify(std::string data) {
     }
 }
 
+void JCrypt::blockify2(std::string data){
+
+    uint8_t* keyarr = new uint8_t[data.length() - 1];
+
+    double num = ceil((double)data.size() / 16);
+    numblocks = (int)num;
+    size = 16*numblocks;
+
+    const uint8_t* iv = new uint8_t(1900);
+
+    blocks2 = new uint8_t[size];
+
+    for (int i = 0; i < size; i++){
+        if (i < data.length()){
+            blocks2[i] = (uint8_t)data[i];
+        }
+        else{
+            blocks2[i] = 0;
+        }
+
+    }
+
+    AES128_CBC_encrypt_buffer16_ip(blocks2, size, keyarr, iv);
+}
+
 uint8_t* JCrypt::arrayKey(std::string key){
     uint8_t* keyarr = new uint8_t[key.length() - 1];
 
@@ -43,20 +68,22 @@ uint8_t* JCrypt::arrayKey(std::string key){
     return keyarr;
 }
 
-void JCrypt::encryptBuffer(std::string key){
+void JCrypt::encrypt(std::string key){
 
     const uint8_t* keyarr = arrayKey(key);
-    uint8_t** output = new uint8_t*[numblocks];
-
-    for (int i = 0; i<numblocks; i++){
-        output[i] = new uint8_t[16];
-    }
+    const uint8_t* iv = new uint8_t(1900);
 
     for (int i = 0; i < numblocks; i++){
-        AES128_ECB_encrypt(blocks[i], keyarr, output[i]);
+        AES128_CBC_encrypt_buffer16_ip(blocks[i], 16, keyarr, iv);
     }
+}
 
-    // Remove plaintext and swap for cyphertext
-    delete[] blocks;
-    blocks = output;
+void JCrypt::decrypt(std::string key) {
+
+    const uint8_t* keyarr = arrayKey(key);
+    const uint8_t* iv = new uint8_t(1900);
+
+    for (int i = 0; i < numblocks; i++){
+        AES128_CBC_decrypt_buffer16_ip(blocks[i], 16, keyarr, iv);
+    }
 }

@@ -5,14 +5,14 @@ class JCryptTest{
     private:
 
 
-        bool testBlockify(){
+        /*bool testBlockify(){
             JCrypt test;
             std::string stuff = "verylongstringthatiscertantlylongerthans16characters";
             test.blockify(stuff);
 
             for (int i = 0; i < (stuff.size()/16)+1; i++ ){
                 for (int j = 0; j < 16; j++){
-                    std::cout<< (int)test.blocks[i][j] << " ";
+                    std::cout<< test.blocks[i][j] << " ";
                 }
                 std::cout << std::endl;
             }
@@ -24,21 +24,58 @@ class JCryptTest{
             JCrypt test;
             std::string stuff = "verylongstringthatiscertantlylongerthans16characters";
             test.blockify(stuff);
-            test.encryptBuffer("yomomma");
+            test.encrypt("yomomma");
 
             for (int i = 0; i < (stuff.size()/16)+1; i++ ){
                 for (int j = 0; j < 16; j++){
-                    std::cout<< (int)test.blocks[i][j] << " ";
+                    std::cout<< test.blocks[i][j] << " ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl << std::endl;
+
+            test.decrypt("yomomma");
+            for (int i = 0; i < (stuff.size()/16)+1; i++ ){
+                for (int j = 0; j < 16; j++){
+                    std::cout<< test.blocks[i][j] << " ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl << std::endl;
+
+            test.encrypt("yomomma");
+            for (int i = 0; i < (stuff.size()/16)+1; i++ ){
+                for (int j = 0; j < 16; j++){
+                    std::cout<< (char)test.blocks[i][j] << " ";
+                }
+                std::cout << std::endl;
+            }
+            std::cout << std::endl << std::endl;
+
+            test.decrypt("yomomma");
+            for (int i = 0; i < (stuff.size()/16)+1; i++ ){
+                for (int j = 0; j < 16; j++){
+                    std::cout<< (char)test.blocks[i][j] << " ";
                 }
                 std::cout << std::endl;
             }
             return true;
+        }*/
+        void test(){
+            JCrypt test;
+            std::string stuff = "verylongstringthatiscertantlylongerthans16characters";
+            test.blockify2(stuff);
+
+            for (int i = 0; i < test.size; i++ ) {
+                std::cout<< test.blocks2[i];
+            }
         }
 
     public:
         int main(void){
-            std::cout << "Blockify Test: " << testBlockify() << std::endl;
-            std::cout << "Ecrypt test: " << testEncrypt();
+            //std::cout << "Blockify Test: " << testBlockify() << std::endl;
+            //std::cout << "Ecrypt test: " << testEncrypt();
+            test();
         }
 };
 

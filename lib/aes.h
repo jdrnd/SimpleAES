@@ -32,6 +32,8 @@ void AES128_ECB_decrypt(uint8_t* input, const uint8_t* key, uint8_t *output);
 
 void AES128_CBC_encrypt_buffer(uint8_t* output, uint8_t* input, uint32_t length, const uint8_t* key, const uint8_t* iv);
 void AES128_CBC_decrypt_buffer(uint8_t* output, uint8_t* input, uint32_t length, const uint8_t* key, const uint8_t* iv);
+void AES128_CBC_encrypt_buffer16_ip(uint8_t* data, uint32_t length, const uint8_t* key, const usint8_t* iv);
+void AES128_CBC_decrypt_buffer16_ip(uint8_t* data, uint32_t length, const uint8_t* key, const uint8_t* iv);
 
 #endif // #if defined(CBC) && CBC
 
