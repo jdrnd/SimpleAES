@@ -3,6 +3,7 @@
 
 #include <string>
 #include <array>
+#include "lib/aes.h"
 
 class JCrypt{
     friend class JCryptTest;
@@ -10,8 +11,12 @@ class JCrypt{
     ~JCrypt();
 
     uint8_t** blocks;
+    int numblocks;
 
     void blockify(std::string data);
+
+    uint8_t* arrayKey(std::string key);
+    void encryptBuffer(std::string key);
 
 public:
 
