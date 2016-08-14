@@ -1,14 +1,14 @@
 #include <iostream>
-#include "jcrypt.h"
+#include "SAES.h"
 #include <time.h>
 #include <assert.h>
 
-class JCryptTest{
+class SAESTest{
     public:
 
         void test(){
             // TODO use asserts here instead of this
-            JCrypt crypter;
+            SAES crypter;
             std::string key = "longkeydfsgsdfgdysdfsgsdf";
             uint8_t* keyarr =  crypter.arrayKey(key);
 
@@ -32,14 +32,14 @@ class JCryptTest{
             }
             std::cout<< "\n\n";
 
-            crypter.encrypt("longkeydfsgsdfgdysdfsgsdf");
+            crypter.encryptText("longkeydfsgsdfgdysdfsgsdf");
             std::cout<< "Outputing encrypted text: ";
             for (int i = 0; i<32; i++){
                 std::cout << crypter.blocks[i] << " ";
             }
             std::cout << "\n\n";
 
-            crypter.decrypt("longkeydfsgsdfgdysdfsgsf");
+            crypter.decryptText("longkeydfsgsdfgdysdfsgsf");
             std::cout<< "Outputting decrypted text: ";
             for (int i = 0; i<32; i++){
                 std::cout << crypter.blocks[i] << " ";
@@ -49,6 +49,6 @@ class JCryptTest{
         }
 };
 int main(){
-    JCryptTest tester;
+    SAESTest tester;
     tester.test();
 }

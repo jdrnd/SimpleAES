@@ -1,4 +1,4 @@
-#include "jcrypt.h"
+#include "SAES.h"
 #include <cmath>
 #include <iostream>
 #include "lib/aes.h"
@@ -6,11 +6,16 @@
 #include <cstdlib>
 #include <time.h>
 
-JCrypt::~JCrypt() {
+SAES::~SAES() {
     delete[] blocks;
+    delete iv;
 }
 
-void JCrypt::blockify(std::string data){
+
+// Transforms an arbitrary string into an character array
+// With length being an exact multiple of 16
+// Pads with extra zeros if required
+void SAES::blockify(std::string data){
 
     uint8_t* keyarr = new uint8_t[data.length() - 1];
 
@@ -41,7 +46,7 @@ void JCrypt::blockify(std::string data){
 
 // Transforms an arbitrary key into a 16-length byte array
 // Pads key with extra zeros if required
-uint8_t* JCrypt::arrayKey(std::string key){
+uint8_t* SAES::arrayKey(std::string key){
     uint8_t* keyarr = new uint8_t[16];
 
 
@@ -57,21 +62,21 @@ uint8_t* JCrypt::arrayKey(std::string key){
     return keyarr;
 }
 
-void JCrypt::encrypt(std::string key){
+void SAES::encryptText(std::string key){
 
     const uint8_t* keyarr = arrayKey(key);
     AES128_CBC_encrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
 
 }
 
-void JCrypt::decrypt(std::string key) {
+void SAES::decryptText(std::string key) {
 
     // TODO implement some sort of decryption verification
     const uint8_t* keyarr = arrayKey(key);
     AES128_CBC_decrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
 }
 
-void JCrypt::setiv(){
+void SAES::setiv(){
 
     // NOT SECURE! USES POOR RNG
     srand(time(NULL));
