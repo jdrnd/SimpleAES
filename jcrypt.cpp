@@ -60,13 +60,13 @@ uint8_t* JCrypt::arrayKey(std::string key){
 void JCrypt::encrypt(std::string key){
 
     const uint8_t* keyarr = arrayKey(key);
-
     AES128_CBC_encrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
 
 }
 
 void JCrypt::decrypt(std::string key) {
 
+    // TODO implement some sort of decryption verification
     const uint8_t* keyarr = arrayKey(key);
     AES128_CBC_decrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
 }

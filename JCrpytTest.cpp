@@ -1,11 +1,13 @@
 #include <iostream>
 #include "jcrypt.h"
 #include <time.h>
+#include <assert.h>
 
 class JCryptTest{
     public:
 
         void test(){
+            // TODO use asserts here instead of this
             JCrypt crypter;
             std::string key = "longkeydfsgsdfgdysdfsgsdf";
             uint8_t* keyarr =  crypter.arrayKey(key);
@@ -37,7 +39,7 @@ class JCryptTest{
             }
             std::cout << "\n\n";
 
-            crypter.decrypt("longkeydfsgsdfgdysdfsgsdf");
+            crypter.decrypt("longkeydfsgsdfgdysdfsgsf");
             std::cout<< "Outputting decrypted text: ";
             for (int i = 0; i<32; i++){
                 std::cout << crypter.blocks[i] << " ";
