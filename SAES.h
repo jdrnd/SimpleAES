@@ -6,6 +6,7 @@
 #include "lib/aes.h"
 
 class SAES{
+    // Allow test class access to private members
     friend class SAESTest;
 
     ~SAES();
@@ -21,14 +22,19 @@ class SAES{
 
     void setiv();
 
-    uint8_t* arrayKey(std::string key);
+    uint8_t* deriveKey(std::string key);
+
+    void prefixIV();
+    void extractIV();
+
+    void clearInternalState();
 
     void blockify(std::string data);
 
 public:
-
-    void encryptText(std::string key);
-    void decryptText(std::string key);
+    // Public API
+    void encryptText(std::string key, std::string data);
+    void decryptText(std::string key, std::string data);
 
 
 
