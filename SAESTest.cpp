@@ -7,7 +7,7 @@ class SAESTest{
     public:
 
         void test(){
-            // TODO use asserts here instead of this
+
             SAES crypter;
             std::string key = "longkeydfsgsdfgdysdfsgsdf";
             uint8_t* keyarr =  crypter.arrayKey(key);

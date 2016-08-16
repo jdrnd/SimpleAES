@@ -71,7 +71,6 @@ void SAES::encryptText(std::string key){
 
 void SAES::decryptText(std::string key) {
 
-    // TODO implement some sort of decryption verification
     const uint8_t* keyarr = arrayKey(key);
     AES128_CBC_decrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
 }
