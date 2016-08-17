@@ -70,27 +70,12 @@ class SAESTest{
     public:
 
         void runTests(){
-
+            // Run test cases here
             testKeyDerrivation();
             testIVgeneration();
             testBlockify();
             testEnDeCrypt();
 
-
-            /*
-            crypter.encryptText("longkeydfsgsdfgdysdfsgsdf",
-                                (std::basic_string<char, char_traits < char>, allocator < char >> ()));
-
-
-            crypter.decryptText("longkeydfsgsdfgdysdfsgsf",
-                                (std::basic_string<char, char_traits < char>, allocator < char >> ()));
-            std::cout<< "Outputting decrypted text: ";
-            for (int i = 0; i<32; i++){
-                std::cout << crypter.blocks[i] << " ";
-            }
-
-            std::cout<<  "\n\n" << time(NULL) % 255;
-             */
         }
 };
 int main(){

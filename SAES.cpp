@@ -143,7 +143,6 @@ void SAES::prefixIV() {
 // Public interface method below:
 
 
-// TODO these funcions need to return something....
 void SAES::encryptText(std::string key, std::string data) {
 
     // Key most be const as per underlying implimentation's requirements

@@ -9,10 +9,13 @@ This library is designed to provide an easy interface to AES encryption.
 In progress
 
 ### Development Status
-  - [x] Text Encryption
+  - [ ] Text Encryption
 
         Need to add "proper" key derrivation
         Maybe take passphrase (padded if required), and hash it?
+        Public api functions need to return values
+        optimize derive/append IV functions by using pointers instead of copying
+
   - [ ] Decryption verification (how do we know when decryption suceeds vs fails?)
 
         Looking into magic bits or a checksum here...
