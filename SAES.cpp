@@ -5,6 +5,9 @@
 #include "lib/aes.cpp"
 #include <cstdlib>
 #include <time.h>
+#include <string.h>
+#include <sstream>
+
 
 SAES::~SAES() {
     delete[] blocks;
@@ -143,7 +146,7 @@ void SAES::prefixIV() {
 // Public interface method below:
 
 
-void SAES::encryptText(std::string key, std::string data) {
+std::string SAES::encryptText(std::string key, std::string data) {
 
     // Key most be const as per underlying implimentation's requirements
     const uint8_t* keyarr = deriveKey(key);
@@ -156,11 +159,19 @@ void SAES::encryptText(std::string key, std::string data) {
 
     delete keyarr;
     keyarr = NULL;
+
+    std::stringstream outputStream;
+
+    for (int i = 0; i< size; i++){
+        outputStream << (char)blocks[i];
+    }
     clearInternalState();
 
+    delete blocks;
+    return outputStream.str();
 }
 
-void SAES::decryptText(std::string key, std::string data) {
+std::string SAES::decryptText(std::string key, std::string data) {
 
     const uint8_t* keyarr = deriveKey(key);
     blockify(data);
@@ -169,5 +180,16 @@ void SAES::decryptText(std::string key, std::string data) {
 
     delete keyarr;
     keyarr = NULL;
+
+    std::stringstream outputStream;
+
+    for (int i = 0; i< size; i++){
+        outputStream << (char)blocks[i];
+    }
     clearInternalState();
+
+    delete blocks;
+    return outputStream.str();
+
+
 }

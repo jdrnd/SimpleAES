@@ -33,8 +33,8 @@ class SAES{
 
 public:
     // Public API
-    void encryptText(std::string key, std::string data);
-    void decryptText(std::string key, std::string data);
+    std::string encryptText(std::string key, std::string data);
+    std::string decryptText(std::string key, std::string data);
 
 
 

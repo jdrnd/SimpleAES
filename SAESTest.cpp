@@ -36,6 +36,10 @@ class SAESTest{
             for (int i = 0; i<16; i++){
                 std::cout << crypter.iv[i] << " ";
             }
+            std::cout << "\n";
+            for (int i = 0; i<16; i++){
+                std::cout << (int)crypter.iv[i] << " ";
+            }
             std::cout<< "\n\n";
         }
 
@@ -55,16 +59,18 @@ class SAESTest{
             std::cout<< "\n\n";
         }
 
-        void testEnDeCrypt(){
+        void testEncrypt(){
 
-            crypter.encryptText("key","long datajdfbshgkdsfjkdshfdjs,f");
-            std::cout<< "Outputing encrypted text: ";
-            for (int i = 0; i<48; i++){
-                std::cout << crypter.blocks[i] << " ";
-            }
-            std::cout << "\n\n";
+            std::string test = crypter.encryptText("key","long datajdfbshgkdsfjkdshfdjs,f");
+            std::cout<< test;
+            // #TODO add regression test test
+        }
 
+        void testDecrypt(){
 
+            std::string test = crypter.encryptText("key","long datajdfbshgkdsfjkdshfdjs,f");
+            test = crypter.decryptText("key", test);
+            std::cout << test;
         }
 
     public:
@@ -74,7 +80,8 @@ class SAESTest{
             testKeyDerrivation();
             testIVgeneration();
             testBlockify();
-            testEnDeCrypt();
+            testEncrypt();
+            testDecrypt();
 
         }
 };

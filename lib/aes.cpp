@@ -491,6 +491,7 @@ static void XorWithIv(uint8_t* buf)
   uint8_t i;
   for(i = 0; i < KEYLEN; ++i)
   {
+  // improper len IV causes segfault
     buf[i] ^= Iv[i];
   }
 }

@@ -15,6 +15,8 @@ In progress
         Maybe take passphrase (padded if required), and hash it?
         Public api functions need to return values
         optimize derive/append IV functions by using pointers instead of copying
+        storing encrypted text: HEX??
+        include support for both hex and ascii encoded strings
 
   - [ ] Decryption verification (how do we know when decryption suceeds vs fails?)
 
