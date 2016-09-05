@@ -7,6 +7,7 @@
 #include <time.h>
 #include <string.h>
 #include <sstream>
+#include <iomanip>
 
 
 SAES::~SAES() {
@@ -44,6 +45,15 @@ void SAES::blockify(std::string data){
             blocks[i] = 0;
         }
     }
+}
+
+std::string SAES::bufferToHex(uint8_t *data, int size) {
+    std::stringstream output;
+    for (int i = 0; i < size; i++){
+        output << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
+    }
+
+    return output.str();
 }
 
 // Key derivation algorithm:
@@ -153,6 +163,7 @@ std::string SAES::encryptText(std::string key, std::string data) {
 
     // Transform data into int vals, store in buffer
     blockify(data);
+    setiv();
 
     AES128_CBC_encrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
     prefixIV();
@@ -161,6 +172,7 @@ std::string SAES::encryptText(std::string key, std::string data) {
     keyarr = NULL;
 
     std::stringstream outputStream;
+    outputStream << std::hex;
 
     for (int i = 0; i< size; i++){
         outputStream << (char)blocks[i];
@@ -182,6 +194,7 @@ std::string SAES::decryptText(std::string key, std::string data) {
     keyarr = NULL;
 
     std::stringstream outputStream;
+    outputStream << std::hex;
 
     for (int i = 0; i< size; i++){
         outputStream << (char)blocks[i];

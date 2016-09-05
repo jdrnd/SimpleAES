@@ -31,6 +31,10 @@ class SAES{
 
     void blockify(std::string data);
 
+    // Helpers
+
+    std::string bufferToHex(uint8_t* data, int size);
+
 public:
     // Public API
     std::string encryptText(std::string key, std::string data);
