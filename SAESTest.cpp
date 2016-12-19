@@ -23,21 +23,18 @@ class SAESTest{
             assert(keyarr[0] == uint8_t(key[0]));
             assert(keyarr[15] == 0);
 
-            std::cout << "Outputting key: \n";
-            std::string keyhex = crypter.bufferToHex(keyarr, 16);
-            for (int i = 0; i<16; i++){
-                std::cout << (int)keyarr[i];
-            }
-            std::cout << "\n" << keyhex << "\n\n";
+            std::cout << "Outputting key: ";
+            std::string keyhex = crypter.bufferToHex(keyarr, 16);  // key is always 16 bytes long
+            std::cout << keyhex << "\n";
 
             assert(keyhex.length() == 32);
+            assert(keyhex == "73686f72746572706173730000000000");
         }
 
         void testIVgeneration(){
 
             crypter.setiv();
 
-            // Do it thise way as direct access causes error
             uint8_t* tempIV = crypter.iv;
             std::string iv = crypter.bufferToHex(tempIV, 16);
 
@@ -56,43 +53,29 @@ class SAESTest{
             assert(crypter.blocks[16] == (uint8_t)'a');
             assert(crypter.blocks[18] == 0);
             assert(crypter.blocks[31] == 0);
+        }
 
-            std::cout << "Outputing raw block with size " << crypter.size << ": ";
-            uint8_t* blocks = crypter.blocks;
-            int len = crypter.size;
+        void testByteSum(){
+            crypter.blockify("Test String");
+            uint16_t expected = 1079;
 
-            std::string blockdata = crypter.bufferToHex(blocks, len);
-            assert(blockdata.length() == (len*2));
+            uint16_t result = crypter.getByteSum();
+            std::cout << "Bytesum for \"Test String\": " << result << "\n";
 
-            std::cout << blockdata << "\n\n";
-
+            assert(result == expected);
         }
 
         void testEncrypt(){
-
             std::string test = crypter.encryptText("key","long datajdfbshgkdsfjkdshfdjs,f");
-            std::cout << "Outputting char representation of cyphertext: \n" << test << "\n\n";
+            std::cout << "Outputting cyphertext: \n" << test << "\n\n";
 
-            int cypherlen = test.length();
-
-            std::cout << "Outputing cyphertext, hex representation: \n";
-            for (int i = 0; i < cypherlen; i++){
-                std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)test[i];
-            }
-            std::cout << "\n";
-
-            for (int i = 0; i < cypherlen; i++){
-                std::cout << (int)test[i];
-            }
-            std::cout << "\n";
-            // #TODO add regression test test
+            // TODO add regression test
         }
 
         void testDecrypt(){
-
-            std::string test = crypter.encryptText("key","long datajdfbshgkdsfjkdshfdjs,f");
+            std::string test = crypter.encryptText("key", "long datajdfbshgkdsfjkdshfdjs,f");
             test = crypter.decryptText("key", test);
-            std::cout << "Outputting decrypted text: \n" << test;
+            std::cout << "\nOutputting decrypted text: \n" << test;
         }
 
     public:
@@ -102,6 +85,7 @@ class SAESTest{
             testKeyDerrivation();
             testIVgeneration();
             testBlockify();
+            testByteSum();
             testEncrypt();
             testDecrypt();
 

@@ -22,23 +22,27 @@ class SAES{
 
     void setiv();
 
-    uint8_t* deriveKey(std::string key);
+    static uint8_t* deriveKey(std::string key);
+
 
     void prefixIV();
     void extractIV();
+
+    uint16_t getByteSum();
 
     void clearInternalState();
 
     void blockify(std::string data);
 
     // Helpers
-
-    std::string bufferToHex(uint8_t* data, int size);
+    static std::string bufferToHex(uint8_t* data, int size);
+    static std::string getASCIIFromHex(std::string hexstr);
 
 public:
     // Public API
-    std::string encryptText(std::string key, std::string data);
-    std::string decryptText(std::string key, std::string data);
+    std::string encryptText(std::string key, std::string data); // Takes in ascii returns hex
+    std::string decryptText(std::string key, std::string hexdata); // Takes in hex returns ascii
+
 
 
 

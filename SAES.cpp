@@ -8,6 +8,9 @@
 #include <string.h>
 #include <sstream>
 #include <iomanip>
+#include <ctype.h>
+#include <assert.h>
+#include <cstddef>
 
 
 SAES::~SAES() {
@@ -56,6 +59,18 @@ std::string SAES::bufferToHex(uint8_t *data, int size) {
     return output.str();
 }
 
+std::string SAES::getASCIIFromHex(std::string hexstr) {
+    int len = hexstr.length();
+    std::string newString;
+    for(int i=0; i< len; i+=2)
+    {
+        std::string byte = hexstr.substr(i,2);
+        char chr = (char) (int)strtol(byte.c_str(), NULL, 16);
+        newString.push_back(chr);
+    }
+    return newString;
+}
+
 // Key derivation algorithm:
 // Currently: Transforms an arbitrary key into a 16-length byte array
 // Pads key with extra zeros if required
@@ -81,6 +96,7 @@ void SAES::setiv(){
 
     // Seed the PRNG
     // NOT SECURE! USES POOR RNG
+    // TODO make this secure!!!
     srand(time(NULL));
 
     // Attempt to clear an existing IV
@@ -95,6 +111,15 @@ void SAES::setiv(){
     for (int i = 0; i< 16; i++){
         iv[i] = (uint8_t)(rand() % 256);
     }
+}
+
+uint16_t SAES::getByteSum() {
+    // We rely on integer overflow here
+    uint16_t sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += (uint16_t)blocks[i];
+    }
+    return sum;
 }
 
 // Clears internal object data after an encrypt or decrypt operation
@@ -137,7 +162,7 @@ void SAES::extractIV() {
 // Prefixes IV to stored data as first 16 bytes
 // Designed so data can be decrypted at a later time
 void SAES::prefixIV() {
-
+    // TODO refactor this to avoid the O(n) copy time
     uint8_t* oldblocks = blocks;
     blocks = new uint8_t[16*(numblocks + 1)];
 
@@ -157,8 +182,7 @@ void SAES::prefixIV() {
 
 
 std::string SAES::encryptText(std::string key, std::string data) {
-
-    // Key most be const as per underlying implimentation's requirements
+    // Key most be const as per underlying implementation's requirements
     const uint8_t* keyarr = deriveKey(key);
 
     // Transform data into int vals, store in buffer
@@ -175,7 +199,7 @@ std::string SAES::encryptText(std::string key, std::string data) {
     outputStream << std::hex;
 
     for (int i = 0; i< size; i++){
-        outputStream << (char)blocks[i];
+        outputStream << std::hex << std::setw(2) << std::setfill('0') << (int)blocks[i];
     }
     clearInternalState();
 
@@ -183,12 +207,20 @@ std::string SAES::encryptText(std::string key, std::string data) {
     return outputStream.str();
 }
 
-std::string SAES::decryptText(std::string key, std::string data) {
+std::string SAES::decryptText(std::string key, std::string hexdata) {
+    // Check to make sure input string is hex
+    size_t strlen = hexdata.length();
+    assert(!(strlen & 1)); //length of hex string must be even
+    for (int i = 0; i < strlen; i++) {
+        assert(isxdigit((int) hexdata[i]));
+    }
+    // Decode hex into ascii
+    std::string data = getASCIIFromHex(hexdata);
 
-    const uint8_t* keyarr = deriveKey(key);
+    const uint8_t *keyarr = deriveKey(key);
     blockify(data);
     extractIV();
-    AES128_CBC_decrypt_buffer16_ip(blocks, (uint8_t)size, keyarr, iv);
+    AES128_CBC_decrypt_buffer16_ip(blocks, (uint8_t) size, keyarr, iv);
 
     delete keyarr;
     keyarr = NULL;
@@ -196,13 +228,11 @@ std::string SAES::decryptText(std::string key, std::string data) {
     std::stringstream outputStream;
     outputStream << std::hex;
 
-    for (int i = 0; i< size; i++){
-        outputStream << (char)blocks[i];
+    for (int i = 0; i < size; i++) {
+        outputStream << (char) blocks[i];
     }
     clearInternalState();
 
     delete blocks;
     return outputStream.str();
-
-
 }
