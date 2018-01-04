@@ -1,3 +1,7 @@
+Code from this folder is modified from https://github.com/kokke/tiny-AES-c
+
+Preserved below is the license:
+
 This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
