@@ -28,9 +28,8 @@ In progress
 
   - [ ] Decryption verification (how do we know when decryption succeeds vs fails?)
 
-        Looking into magic bits or a checksum here...
-        HMAC?? https://en.wikipedia.org/wiki/Hash-based_message_authentication_code
-        This?? https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+        Use a 32-bit CRC that we encrypt along with the plaintext
+
   - [ ] Make key and IV generation more secure
 
         Run raw key through a hashing function and use that as key
@@ -48,11 +47,9 @@ In progress
         Break out tests into proper individual methods, use asserts
 
 ##### Raw encrypted data:
-   - First 16 byte block: initialization vector
-   - (TODO: next 16 byte block: checksum or magic bytes for verification)
-
+   - First 16 byte block: initialization vector/nounce
         Not sure if we should be putting these "known bytes" at the beginning or end of the data.
-   - Next `n` blocks: encrypted data
+   - Next `n` blocks: encrypted data, followed by 4 bytes CRC, then padded according to PKCS \#7.
 
 
 Resources used:

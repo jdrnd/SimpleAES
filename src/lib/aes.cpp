@@ -24,7 +24,7 @@ ECB-AES128
     7b0c785e27e8ad3f8223207104725dd4
 
 
-NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
+note:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
         You should pad the end of the string with zeros if this is not the case.
 
 */

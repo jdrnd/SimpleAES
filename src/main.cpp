@@ -3,5 +3,5 @@
 #include "test/test.h"
 
 int main(void) {
-  Tests().runTests();
+  Tests::runTests();
 }

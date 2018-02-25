@@ -13,8 +13,8 @@
 // prints string as hex
 void Tests::phex(uint8_t* str)
 {
-    unsigned char i;
-    for(i = 0; i < 16; ++i){
+    uint8_t i;
+    for(i = 0; i < BLOCK_SIZE; ++i){
         printf("%.2x", str[i]);
     }
     std::cout<<"\n";
@@ -23,9 +23,10 @@ void Tests::phex(uint8_t* str)
 void Tests::runTests(void)
 {
     std::cout<<"Beginning Tests\n\n";
-    //test_encrypt_cbc();
-    //test_decrypt_cbc();
     test_decrypt_ecb();
     test_encrypt_ecb();
     test_encrypt_ecb_verbose();
+    test_crc();
+    test_key_derivation();
+    test_ecb();
 }
