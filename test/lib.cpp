@@ -3,7 +3,7 @@
 
 #include "test.h"
 #include "../lib/aes.h"
-#include "../crypter.h"
+#include "../src/crypter.h"
 
 
 void Tests::test_encrypt_ecb_verbose(void)

@@ -3,10 +3,10 @@
 This library is designed to provide an easy interface to 128-bit AES encryption.
 
 Building off an extremely minimal AES ECB implementation this library strives to do the following (none of which is provided by the ECB code):
-  - [ ] Protect against memory out of bounds errors
-  - [ ] Allow for inputs of arbitrary length, not just 16 bytes
-  - [ ] Provide message authentication and integrity verification
-  - [ ] Detect when an incorrect key is being used (rather than spitting out gibberish)
+  - [x] Protect against memory out of bounds errors
+  - [x] Allow for inputs of arbitrary length, not just 16 bytes
+  - [x] Provide message authentication and integrity verification
+  - [x] Detect when an incorrect key is being used (rather than spitting out gibberish)
   - [ ] Implement CBC, PCBC, CFB, OFB, and CTR modes of operation
 
 
@@ -26,7 +26,7 @@ In progress
         storing encrypted text: HEX??
         include support for both hex and ascii encoded strings?
 
-  - [ ] Decryption verification (how do we know when decryption succeeds vs fails?)
+  - [x] Decryption verification (how do we know when decryption succeeds vs fails?)
 
         Use a 32-bit CRC that we encrypt along with the plaintext
 

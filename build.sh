@@ -1,9 +1,11 @@
 #!/bin/sh
 CODE_FILES="src/main.cpp \
             src/crypter.cpp \
-            src/test/test.cpp \
-            src/test/ecb.cpp \
-            src/test/utils.cpp \
-            src/test/lib.cpp \
-            src/lib/aes.cpp"
-clang++ $CODE_FILES -o crypter -ggdb -std=c++11
+            src/helpers.cpp \
+            test/test.cpp \
+            test/ecb.cpp \
+            test/cbc.cpp \
+            test/utils.cpp \
+            test/lib.cpp \
+            lib/aes.cpp"
+clang++ $CODE_FILES -o bin/crypter -ggdb -std=c++11

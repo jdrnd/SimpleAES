@@ -1,12 +1,8 @@
 #include <assert.h>
 #include <iostream>
-#include <string.h>
-#include <cstring>
-#include <stdio.h>
-
 
 #include "test.h"
-#include "../crypter.h"
+#include "../src/crypter.h"
 
 
 void Tests::test_crc(void) {

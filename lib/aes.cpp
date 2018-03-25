@@ -1,6 +1,6 @@
 /*
 
-This is an implementation of the AES128 algorithm, specifically ECB and CBC mode.
+This is an implementation of the AES128 algorithm, specifically ECB mode.
 
 The implementation is verified against the test vectors in:
   National Institute of Standards and Technology Special Publication 800-38A 2001 ED
@@ -33,8 +33,7 @@ note:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /*****************************************************************************/
 /* Includes:                                                                 */
 /*****************************************************************************/
-#include <stdint.h>
-#include <string.h> // CBC mode, for memset
+#include <cstdint>
 
 #include "aes.h"
 /*****************************************************************************/
