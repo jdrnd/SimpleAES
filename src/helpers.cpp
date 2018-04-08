@@ -1,6 +1,4 @@
 #include "crypter.h"
-#include "../lib/aes.h"
-#include "../test/test.h"
 
 // Helpers for the crypter class
 
@@ -19,4 +17,12 @@ void Crypter::xor_together(uint8_t* block1, uint8_t* block2) {
   for (int i=0; i<BLOCK_SIZE; i++) {
     block1[i] ^= block2[i];
   }
+}
+
+uint8_t* Crypter::copy_block(uint8_t *block) {
+  uint8_t* new_block = new uint8_t[BLOCK_SIZE];
+  for (int i=0; i<BLOCK_SIZE; i++) {
+    new_block[i] = block[i];
+  }
+  return new_block;
 }

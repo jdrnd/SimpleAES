@@ -27,7 +27,8 @@ void Tests::runTests(void)
     test_encrypt_ecb();
     test_encrypt_ecb_verbose();
     test_crc();
-    test_key_derivation();
-    test_ecb();*/
-    test_cbc();
+    test_key_derivation();*/
+    //test_ecb();
+    //est_cbc();
+    test_pcbc();
 }

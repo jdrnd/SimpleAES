@@ -29,17 +29,22 @@ class Crypter {
   static size_t calculate_num_blocks(size_t* data_len);
   static uint8_t calculate_padding_len(size_t* data_len, size_t num_blocks);
   static void xor_together(uint8_t* block1, uint8_t* block2);
+  static uint8_t* copy_block(uint8_t* block);
 
 
 public:
   Crypter();
 
+  // TODO modify these to return structs
+  // (after previous) TODO remove common code into pipeline methods eg. prepare_data
   // Assume data is passed in as a C-style string
-  static uint8_t* ECB_encrypt(uint8_t* data, size_t *data_len, char* passphrase); // Returns data encrypted in place, length updated
-  static uint8_t* ECB_decrypt(uint8_t* data, size_t* data_len, char* passphrase);
+  static uint8_t* ECB_encrypt(uint8_t* data, size_t *data_len, char* passphrase); // Returns pointer to encrypted data, length updated
+  static uint8_t* ECB_decrypt(uint8_t* data, size_t *data_len, char* passphrase);
 
-  static uint8_t* CBC_encrypt(uint8_t* data, size_t *data_len, char* passphrase); // Returns data encrypted in place, length updated
-  static uint8_t* CBC_decrypt(uint8_t* data, size_t* data_len, char* passphrase);
+  static uint8_t* CBC_encrypt(uint8_t* data, size_t *data_len, char* passphrase); // Returns pointer to encrypted data, length updated
+  static uint8_t* CBC_decrypt(uint8_t* data, size_t *data_len, char* passphrase);
 
+  static uint8_t* PCBC_encrypt(uint8_t* data, size_t *data_len, char* passphrase);  // Returns pointer to encrypted data, length updated
+  static uint8_t* PCBC_decrypt(uint8_t* data, size_t *data_len, char* passphrase);
 };
 #endif

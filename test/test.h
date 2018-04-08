@@ -5,12 +5,14 @@
 
 class Tests {
 
+  // TODO use a real test framework
   static void test_encrypt_ecb_verbose(void);
   static void test_encrypt_ecb(void);
   static void test_decrypt_ecb(void);
 
   static void test_ecb(void);
   static void test_cbc(void);
+  static void test_pcbc(void);
 
   static void test_crc(void);
   static void test_key_derivation(void);

@@ -1,3 +1,5 @@
 .idea
 *.gch
 crypter.dSYM/
+cmake-build-debug/
+.DS_Store
