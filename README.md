@@ -13,7 +13,7 @@ Building off an extremely minimal AES ECB implementation this library strives to
     - [ ] CFB
     - [ ] OFB
     - [ ] CTR 
-   
+ 
    
 
 This code is purely experimental. NEVER use this in any system which requires actual security. Personally I recommend the Salt library (https://nacl.cr.yp.to/index.html), but I am not a cryptographer (see license disclaimer). 
@@ -35,7 +35,7 @@ In progress
   - [ ] Helper functions to en/decrypt other C++ data types/structures
   - [x] Decryption verification (how do we know when decryption succeeds vs fails?)
         
-        Use a 32-bit CRC that we encrypt along with the plaintext
+        Uses a 32-bit CRC that we encrypt along with the plaintext
   - [x] ECB support for arbitrary length
     - [x] PKCS #7 padding
   - [x] CBC mode
@@ -62,6 +62,8 @@ Using Pseudorandom Functions" (http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistsp
   - PCKS \#7 Specification - IETF Network Working Group (https://tools.ietf.org/html/rfc2315)
 
   - PKCS \#5 Specification - IETF Network Working Group (https://tools.ietf.org/html/rfc2898)
+  
+  - Google C++ Style Guide (https://google.github.io/styleguide/cppguide.html)
 
 
 ##### Project by Joel Ruhland - joel.ruhland@uwaterloo.ca

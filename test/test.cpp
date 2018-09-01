@@ -16,7 +16,7 @@ void Tests::phex(uint8_t* str)
     for(i = 0; i < BLOCK_SIZE; ++i){
         printf("%.2x", str[i]);
     }
-    std::cout<<"\n";
+    printf("\n");
 }
 
 void Tests::runTests(void)
@@ -30,5 +30,6 @@ void Tests::runTests(void)
     test_key_derivation();*/
     //test_ecb();
     //est_cbc();
-    test_pcbc();
+    //test_pcbc();
+    test_cfb();
 }

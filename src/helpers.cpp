@@ -9,7 +9,7 @@ size_t Crypter::calculate_num_blocks(size_t* data_len) {
 }
 
 uint8_t Crypter::calculate_padding_len(size_t* data_len, size_t num_blocks) {
-  return (num_blocks * BLOCK_SIZE) - ((*data_len) + CRC_LEN);
+  return (uint8_t)((int)num_blocks * BLOCK_SIZE) - (((int)*data_len) + CRC_LEN);
 }
 
 // bock1 ^= block2
@@ -25,4 +25,19 @@ uint8_t* Crypter::copy_block(uint8_t *block) {
     new_block[i] = block[i];
   }
   return new_block;
+}
+
+void Crypter::copy_block(uint8_t *block, uint8_t *destination) {
+  for (int i=0; i<BLOCK_SIZE; i++) {
+    destination[i] = block[i];
+  }
+}
+
+// Movies data to new location, deletes original
+// Destination must have capacity to store BLOCK_SIZE bytes
+void Crypter::move_block(uint8_t *block, uint8_t *destination) {
+  for (int i=0; i<BLOCK_SIZE; i++) {
+    destination[i] = block[i];
+  }
+  memset(block, 0, BLOCK_SIZE);
 }

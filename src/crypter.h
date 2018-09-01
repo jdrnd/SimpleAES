@@ -3,11 +3,10 @@
 
 #include "../test/test.h"
 
-#ifndef CRYPTER_H
+#ifndef CRYPTER_Hd
 #define CRYPTER_H
 
 #define BLOCK_SIZE 16
-#define NUM_CRC_BYTES 4
 
 // 32 bit CRC polynomial from the ethenet standard
 #define CRC_POLY 0xEDB88320
@@ -30,6 +29,8 @@ class Crypter {
   static uint8_t calculate_padding_len(size_t* data_len, size_t num_blocks);
   static void xor_together(uint8_t* block1, uint8_t* block2);
   static uint8_t* copy_block(uint8_t* block);
+  static void copy_block(uint8_t* block, uint8_t* destination);
+  static void move_block(uint8_t* block, uint8_t* destination);
 
 
 public:
@@ -46,5 +47,8 @@ public:
 
   static uint8_t* PCBC_encrypt(uint8_t* data, size_t *data_len, char* passphrase);  // Returns pointer to encrypted data, length updated
   static uint8_t* PCBC_decrypt(uint8_t* data, size_t *data_len, char* passphrase);
+
+  static uint8_t* CFB_encrypt(uint8_t* data, size_t *data_len, char* passphrase);  // Returns pointer to encrypted data, length updated
+  static uint8_t* CFB_decrypt(uint8_t* data, size_t *data_len, char* passphrase);
 };
 #endif

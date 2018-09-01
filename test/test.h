@@ -13,6 +13,7 @@ class Tests {
   static void test_ecb(void);
   static void test_cbc(void);
   static void test_pcbc(void);
+  static void test_cfb(void);
 
   static void test_crc(void);
   static void test_key_derivation(void);

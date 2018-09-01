@@ -16,7 +16,7 @@ add_executable (crypter
         test/utils.cpp
         test/ecb.cpp
         test/cbc.cpp
-        test/pcbc.cpp)
+        test/pcbc.cpp test/cfb.cpp)
 
 set_target_properties(crypter PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY_DEBUG ../bin

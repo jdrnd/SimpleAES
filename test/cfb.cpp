@@ -5,8 +5,8 @@
 #include "test.h"
 #include "../src/crypter.h"
 
-void Tests::test_pcbc(void) {
-  std::cout << "Testing PCBC: \n";
+void Tests::test_cfb(void) {
+  std::cout << "Testing CFB: \n";
 
   uint8_t key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
   uint8_t in[]  = { 0x76, 0x49, 0xab, 0xac, 0x81, 0x19, 0xb2, 0x46, 0xce, 0xe9, 0x8e, 0x9b, 0x12, 0xe9, 0x19, 0x7d,
@@ -16,18 +16,18 @@ void Tests::test_pcbc(void) {
   uint8_t* input_data = &in[0];
   size_t* data_len = new size_t(64);
 
-  uint8_t* encrypted_data = Crypter::PCBC_encrypt(input_data, data_len, (char*) &key[0]);
+  uint8_t* encrypted_data = Crypter::CFB_encrypt(input_data, data_len, (char*) &key[0]);
+
 
   assert(*data_len == 96); // IV + 64 data + CRC + padding
 
   uint8_t same_key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
-  uint8_t* plaintext_data = Crypter::PCBC_decrypt(encrypted_data, data_len, (char*) &same_key[0]);
+  uint8_t* plaintext_data = Crypter::CFB_decrypt(encrypted_data, data_len, (char*) &same_key[0]);
 
-
+  printf("%i", (int)*data_len);
   assert(*data_len == 64);
   uint8_t expected[] = {0x76, 0x49, 0xab, 0xac, 0x81, 0x19};
   assert(0 == strncmp((char*)expected, (char*)plaintext_data, 6));
-  std::cout << "PCBC Tests Passed\n\n";
+
+  std::cout << "CFB Tests Passed\n\n";
 }
-
-
