@@ -43,8 +43,6 @@ note:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 #define Nb 4
 // The number of 32 bit words in a key.
 #define Nk 4
-// Key length in bytes [128 bit]
-#define KEYLEN 16
 // The number of rounds in AES Cipher.
 #define Nr 10
 
@@ -431,16 +429,6 @@ static void InvCipher(void)
 /*****************************************************************************/
 /* Public functions:                                                         */
 /*****************************************************************************/
-
-static void BlockCopy(uint8_t* output, const uint8_t* input)
-{
-  uint8_t i;
-  for (i=0;i<KEYLEN;++i)
-  {
-    output[i] = input[i];
-  }
-}
-
 
 #if defined(ECB) && ECB
 

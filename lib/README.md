@@ -5,7 +5,7 @@ Modifications: removed the CBC implementation as I do that myself, and modified 
 
 This is a small and portable implementation of the AES128 ECB and CBC encryption algorithms written in C.
 
-The API that we're using here is very simple and looks like this (Uses C99 `<stdint.h>`-style annotated types):
+The API that we're using here is very simple and looks like this (Uses C99 `<cstdint>`-style annotated types):
 
 ```C
 // Modified to encrypt/decrypt in-place so output buffer === input buffer

@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef TEST_TEST_H
 #define TEST_TEST_H

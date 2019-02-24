@@ -1,8 +1,9 @@
 # SimpleAES Library
+##### Project by Joel Ruhland - joel@joelruhland.net
 
 This library is designed to provide an easy interface to 128-bit AES encryption.
 
-Building off an extremely minimal AES ECB implementation this library strives to do the following (none of which is provided by the ECB code):
+Building off an extremely minimal AES ECB implementation, this library strives to do the following (none of which is provided by the ECB code):
   - [x] Protect against memory out of bounds errors
   - [x] Allow for inputs of arbitrary length, not just 16 bytes
   - [x] Provide message authentication and integrity verification
@@ -64,9 +65,6 @@ Using Pseudorandom Functions" (http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistsp
   - PKCS \#5 Specification - IETF Network Working Group (https://tools.ietf.org/html/rfc2898)
   
   - Google C++ Style Guide (https://google.github.io/styleguide/cppguide.html)
-
-
-##### Project by Joel Ruhland - joel.ruhland@uwaterloo.ca
 
 
 #### Useful Notes

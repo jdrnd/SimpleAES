@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdint.h>
+#include <cstdio>
+#include <cstdint>
 #include <iostream>
 
 // Enable EBC mode
