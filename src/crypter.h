@@ -12,7 +12,7 @@
 #define CRC_POLY 0xEDB88320
 #define CRC_LEN 4
 
-#define DEBUG
+//#define DEBUG
 
 class Crypter {
   friend class Tests;

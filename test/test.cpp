@@ -22,14 +22,14 @@ void Tests::phex(uint8_t* str)
 void Tests::runTests(void)
 {
     std::cout<<"Beginning Tests\n\n";
-    /*
     test_decrypt_ecb();
     test_encrypt_ecb();
     test_encrypt_ecb_verbose();
     test_crc();
-    test_key_derivation();*/
-    //test_ecb();
-    //est_cbc();
-    //test_pcbc();
+    test_key_derivation();
+    test_ecb();
+    test_cbc();
+    test_pcbc();
     test_cfb();
+    std::cout << "All Tests Passed\n";
 }

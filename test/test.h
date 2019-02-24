@@ -5,7 +5,7 @@
 
 class Tests {
 
-  // TODO use a real test framework
+    // TODO refactor to use a real test framework
   static void test_encrypt_ecb_verbose(void);
   static void test_encrypt_ecb(void);
   static void test_decrypt_ecb(void);

@@ -9,7 +9,7 @@ size_t Crypter::calculate_num_blocks(size_t* data_len) {
 }
 
 uint8_t Crypter::calculate_padding_len(size_t* data_len, size_t num_blocks) {
-  return (uint8_t)((int)num_blocks * BLOCK_SIZE) - (((int)*data_len) + CRC_LEN);
+    return (uint8_t) ((int) num_blocks * BLOCK_SIZE) - (((int) *data_len) + CRC_LEN);
 }
 
 // bock1 ^= block2

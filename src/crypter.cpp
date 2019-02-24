@@ -372,14 +372,16 @@ uint8_t* Crypter::CFB_encrypt(uint8_t* data, size_t *data_len, char* passphrase)
 
   // Fills the first block with a random initialization vector (nounce)
   generate_and_fill_IV(buffer);
+  // Copy the IV into the "first" block's position
+  copy_block(buffer, &buffer[BLOCK_SIZE]);
 
-  // Copy input data into buffer after intialization vector
+  // Copy input data into buffer after initialization vector
   for (size_t i=0; i < (*data_len); i++) {
     buffer[BLOCK_SIZE + i] = data[i];
   }
 
   // Append CRC after data
-  uint32_t crc = calculate_crc_32(buffer + BLOCK_SIZE, (*data_len));
+  uint32_t crc = calculate_crc_32(buffer + 2 * BLOCK_SIZE, (*data_len));
   pack_crc_32(buffer, crc, BLOCK_SIZE + (*data_len));
 
   // Padding according to PKCS #7 - always pad at least one byte
@@ -396,21 +398,20 @@ uint8_t* Crypter::CFB_encrypt(uint8_t* data, size_t *data_len, char* passphrase)
 
   // Encrypt previous encrypted block (starting with IV), then XOR with current block plaintext
   size_t current_block_num = 1;
-  uint8_t* current_plaintext = new uint8_t[BLOCK_SIZE];
+  uint8_t prev_cyphertext[BLOCK_SIZE];
 
   while (current_block_num <= num_data_blocks) {
-    // makes a copy of plaintext to XOR later
-    copy_block(&buffer[current_block_num], current_plaintext);
+    // encrypt previous block, then XOR with next block's plaintext
+    copy_block(&buffer[(current_block_num - 1) * BLOCK_SIZE], prev_cyphertext);
+    AES128_ECB_encrypt(prev_cyphertext, key);
 
-    // copies last block into new block position as base for encryption
-    copy_block(&buffer[current_block_num*BLOCK_SIZE - BLOCK_SIZE], &buffer[current_block_num*BLOCK_SIZE]);
+    xor_together(&buffer[current_block_num * BLOCK_SIZE], prev_cyphertext);
 
-    AES128_ECB_encrypt(&buffer[current_block_num*BLOCK_SIZE], key);
-    xor_together(&buffer[current_block_num*BLOCK_SIZE], current_plaintext);
-
-    memset(current_plaintext, 0, BLOCK_SIZE);
     current_block_num++;
   }
+
+  // Erase trailing plaintext block
+  memset(&buffer[current_block_num * BLOCK_SIZE], 0, BLOCK_SIZE);
 
   #ifdef DEBUG
     std::cout << "Encrypted data: \n";
@@ -447,32 +448,34 @@ uint8_t* Crypter::CFB_decrypt(uint8_t* data, size_t *data_len, char* passphrase)
   uint8_t* previous_cyphertext = &data[0];
   size_t current_block_num = 1;
 
+  // We don't need the initialization vector after this point so we can overwrite it
   while (current_block_num <= num_data_blocks) {
-    copy_block(&data[current_block_num*BLOCK_SIZE], current_cyphertext);
-    copy_block(previous_cyphertext, &data[current_block_num*BLOCK_SIZE]);
+    AES128_ECB_encrypt(&data[current_block_num * BLOCK_SIZE - BLOCK_SIZE],
+                       key); // Yes, this is encryption, see the CFB spec
+    xor_together(&data[current_block_num * BLOCK_SIZE - BLOCK_SIZE], &data[current_block_num * BLOCK_SIZE]);
 
-    AES128_ECB_encrypt(&data[current_block_num*BLOCK_SIZE], key); // Yes, this is encryption, see the CFB spec
-    xor_together(&data[current_block_num*BLOCK_SIZE], current_cyphertext);
-
-    copy_block(current_cyphertext, previous_cyphertext);
     current_block_num++;
   }
+  memset(&data[current_block_num * BLOCK_SIZE], 0, BLOCK_SIZE);
 
   // PKCS padding means the last value in the buffer is the number of padded bytes
-  size_t padding_len = data[(*data_len) - 1];
+  // There is an additional copy of the last cyphertext block at the end
+  size_t padding_len = data[(*data_len) - BLOCK_SIZE - 1];
 
   // Update data_len to be length of the original message
-  *data_len = (*data_len) - padding_len - CRC_LEN;
+  // Again extra block of cyphertext is left at end
+  *data_len = (*data_len) - padding_len - CRC_LEN - BLOCK_SIZE;
 
 
   #ifdef DEBUG
     printf("%i\n", (int)padding_len);
     std::cout << "Output data: \n";
-    for (int i = 0; i < num_data_blocks + 1; i++){
+    // We overwrite the IV block here
+    for (int i = 0; i < num_data_blocks; i++){
       Tests::phex(&data[i*BLOCK_SIZE]);
     }
   #endif
-  /*
+
   // Perform CRC verification
   uint32_t crc_value = unpack_crc_32(data, *data_len);
   if (crc_value != Crypter::calculate_crc_32(data + BLOCK_SIZE, (*data_len) - BLOCK_SIZE)) {
@@ -494,6 +497,4 @@ uint8_t* Crypter::CFB_decrypt(uint8_t* data, size_t *data_len, char* passphrase)
   // Don't delete data buffer because it was allocated outside this library
 
   return plaintext_buffer;
-  */
-  return NULL;
 }

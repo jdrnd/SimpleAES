@@ -10,7 +10,7 @@ Building off an extremely minimal AES ECB implementation this library strives to
   - [ ] Implement the following modes of operation
     - [x] CBC
     - [x] PCBC
-    - [ ] CFB
+    - [x] CFB
     - [ ] OFB
     - [ ] CTR 
  
@@ -68,6 +68,9 @@ Using Pseudorandom Functions" (http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistsp
 
 ##### Project by Joel Ruhland - joel.ruhland@uwaterloo.ca
 
+
+#### Useful Notes
+To print a buffer of length 96 as hex using gdb: `x /96xb buffer`
 
 ### License 
 
