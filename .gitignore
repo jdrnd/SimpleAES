@@ -3,3 +3,10 @@
 crypter.dSYM/
 cmake-build-debug/
 .DS_Store
+valgrind-out.txt
+bazel-*
+CMakeFiles/*
+.vscode/
+CMakeCache.txt
+cmake_install.cmake
+crypter

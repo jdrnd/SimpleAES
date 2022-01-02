@@ -33,7 +33,9 @@ note:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /*****************************************************************************/
 /* Includes:                                                                 */
 /*****************************************************************************/
+#include <string.h>
 #include <cstdint>
+
 
 #include "aes.h"
 /*****************************************************************************/
@@ -449,6 +451,32 @@ void AES128_ECB_decrypt(uint8_t* data, const uint8_t* key)
 {
   // Work in-memory on data
   state = (state_t*)data;
+
+  // The KeyExpansion routine must be called before encryption.
+  Key = key;
+  KeyExpansion();
+
+  InvCipher();
+}
+
+void AES128_ECB_encrypt(const uint8_t* data, uint8_t* output, const uint8_t* key)
+{
+  // Work on copy of data
+  state = (state_t*)output;
+  memcpy(output, data, sizeof(state_t));
+
+  Key = key;
+  KeyExpansion();
+
+  // The next function call encrypts the PlainText with the Key using AES algorithm.
+  Cipher();
+}
+
+void AES128_ECB_decrypt(const uint8_t* data, uint8_t* output, const uint8_t* key)
+{
+  // Work in-memory on data
+  state = (state_t*)output;
+  memcpy(output, data, sizeof(state_t));
 
   // The KeyExpansion routine must be called before encryption.
   Key = key;

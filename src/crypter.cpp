@@ -4,7 +4,9 @@
 #include <iostream>
 
 #include "crypter.h"
-#include "../lib/aes.h"
+#include "lib/aes.h"
+
+// #define DEBUG
 
 Crypter::Crypter() {
     srand((unsigned int) time(0));
@@ -24,7 +26,7 @@ uint8_t *Crypter::CBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
     uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
     uint32_t num_data_blocks = num_blocks - 1;
   uint8_t padding_len = Crypter::calculate_padding_len(data_len, num_data_blocks);
-    auto *buffer = new uint8_t[num_blocks * BLOCK_SIZE];
+  auto *buffer = new uint8_t[num_blocks * BLOCK_SIZE]();
 
   // Fills the first block with a random initialization vector (nounce)
   generate_and_fill_IV(buffer);
@@ -46,7 +48,7 @@ uint8_t *Crypter::CBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   #ifdef DEBUG
   std::cout << "Raw data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -65,7 +67,7 @@ uint8_t *Crypter::CBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   #ifdef DEBUG
   std::cout << "Encrypted data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -83,14 +85,15 @@ uint8_t *Crypter::CBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphras
   if (*data_len <= 0) {
       return nullptr; // Can't decrypt no data
   }
-    uint32_t original_data_len = *data_len;
-    uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
+
+  uint32_t original_data_len = *data_len;
+  uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
   uint8_t *key = derive_key(passphrase);
 
   #ifdef DEBUG
   std::cout << "\n\nInput data: \n";
   for (int i = 0; i < num_data_blocks + 1; i++){
-    Tests::phex(&data[i*BLOCK_SIZE]);
+    phex(&data[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -107,7 +110,7 @@ uint8_t *Crypter::CBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphras
   #ifdef DEBUG
   std::cout << "Output data: \n";
   for (int i = 0; i < num_data_blocks + 1; i++){
-    Tests::phex(&data[i*BLOCK_SIZE]);
+    phex(&data[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -121,8 +124,8 @@ uint8_t *Crypter::CBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphras
   *data_len = *data_len - BLOCK_SIZE; // Don't include the IV in the length
 
   // Copy data minus IV and CRC/padding to new buffer to avoid memory leak or offset
-    auto *plaintext_buffer = new uint8_t[*data_len];
-  for (int i = 0; i < (*data_len); i++) {
+    auto *plaintext_buffer = new uint8_t[*data_len]();
+  for (uint i = 0; i < (*data_len); i++) {
     plaintext_buffer[i] = data[BLOCK_SIZE + i];
   }
 
@@ -144,7 +147,7 @@ uint8_t *Crypter::ECB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
 
     uint32_t num_blocks = calculate_num_blocks(data_len);
   uint8_t padding_len = calculate_padding_len(data_len, num_blocks);
-  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE];
+  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE]();
 
   // Copy data into buffer
     for (uint32_t i = 0; i < (*data_len); i++) {
@@ -162,7 +165,7 @@ uint8_t *Crypter::ECB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   #ifdef DEBUG
   std::cout << "Input data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -174,7 +177,7 @@ uint8_t *Crypter::ECB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   #ifdef DEBUG
   std::cout << "Encrypted data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -225,10 +228,10 @@ uint8_t *Crypter::PCBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphra
   uint8_t* key = derive_key(passphrase);
   memset(key, 0, strlen(passphrase));
 
-    uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
-    uint32_t num_data_blocks = num_blocks - 1;
+  uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
+  uint32_t num_data_blocks = num_blocks - 1;
   uint8_t padding_len = Crypter::calculate_padding_len(data_len, num_data_blocks);
-  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE];
+  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE]();
 
   // Fills the first block with a random initialization vector (nounce)
   generate_and_fill_IV(buffer);
@@ -250,14 +253,14 @@ uint8_t *Crypter::PCBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphra
   #ifdef DEBUG
   std::cout << "Raw data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
   uint8_t* cypher_input_block = &buffer[0]; // initialization vector
     uint8_t *block_plaintext = nullptr;
 
-  for (int i=1; i<=num_data_blocks; i++){
+  for (uint i=1; i<=num_data_blocks; i++){
      block_plaintext = copy_block(&buffer[BLOCK_SIZE*i]);
 
     xor_together(&buffer[i*BLOCK_SIZE], cypher_input_block);
@@ -272,7 +275,7 @@ uint8_t *Crypter::PCBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphra
   #ifdef DEBUG
   std::cout << "Encrypted data: \n";
   for (int i = 0; i < num_blocks; i++){
-    Tests::phex(&buffer[i*BLOCK_SIZE]);
+    phex(&buffer[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -297,15 +300,15 @@ uint8_t *Crypter::PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphra
 
   #ifdef DEBUG
   std::cout << "\n\nInput data: \n";
-  for (int i = 0; i < num_data_blocks + 1; i++){
-    Tests::phex(&data[i*BLOCK_SIZE]);
+  for (uint i = 0; i < num_data_blocks + 1; i++){
+    phex(&data[i*BLOCK_SIZE]);
   }
   #endif
 
   uint8_t* cypher_input_block = &data[0]; // IV
     uint8_t *previous_cyphertext = nullptr;
 
-  for (int i=1; i<=num_data_blocks; i++){
+  for (uint i=1; i<=num_data_blocks; i++){
     previous_cyphertext = copy_block(&data[i*BLOCK_SIZE]);
 
     // Decrypt block, then XOR with the cypher input block
@@ -323,7 +326,7 @@ uint8_t *Crypter::PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphra
   #ifdef DEBUG
   std::cout << "Output data: \n";
   for (int i = 0; i < num_data_blocks + 1; i++){
-    Tests::phex(&data[i*BLOCK_SIZE]);
+    phex(&data[i*BLOCK_SIZE]);
   }
   #endif
 
@@ -345,8 +348,8 @@ uint8_t *Crypter::PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphra
   *data_len = *data_len - BLOCK_SIZE; // Don't include the IV in the length
 
   // Copy data minus IV and CRC/padding to new buffer to avoid memory leak or offset
-  uint8_t *plaintext_buffer = new uint8_t[*data_len];
-  for (int i = 0; i < (*data_len); i++) {
+  uint8_t *plaintext_buffer = new uint8_t[*data_len]();
+  for (uint i = 0; i < (*data_len); i++) {
     plaintext_buffer[i] = data[BLOCK_SIZE + i];
   }
 
@@ -365,10 +368,10 @@ uint8_t *Crypter::CFB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   uint8_t* key = derive_key(passphrase);
   memset(key, 0, strlen(passphrase));
 
-    uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
-    uint32_t num_data_blocks = num_blocks - 1;
+  uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
+  uint32_t num_data_blocks = num_blocks - 1;
   uint8_t padding_len = Crypter::calculate_padding_len(data_len, num_data_blocks);
-  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE];
+  uint8_t* buffer = new uint8_t[num_blocks*BLOCK_SIZE]();
 
   // Fills the first block with a random initialization vector (nounce)
   generate_and_fill_IV(buffer);
@@ -381,7 +384,7 @@ uint8_t *Crypter::CFB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   }
 
   // Append CRC after data
-  uint32_t crc = calculate_crc_32(buffer + 2 * BLOCK_SIZE, (*data_len));
+  uint32_t crc = calculate_crc_32(buffer + BLOCK_SIZE, (*data_len));
   pack_crc_32(buffer, crc, BLOCK_SIZE + (*data_len));
 
   // Padding according to PKCS #7 - always pad at least one byte
@@ -391,13 +394,13 @@ uint8_t *Crypter::CFB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
 
   #ifdef DEBUG
       std::cout << "Raw data: \n";
-    for (int i = 0; i < num_blocks; i++){
-      Tests::phex(&buffer[i*BLOCK_SIZE]);
+    for (int i = 0; i < num_blocks; i++) {
+      phex(&buffer[i*BLOCK_SIZE]);
     }
   #endif
 
   // Encrypt previous encrypted block (starting with IV), then XOR with current block plaintext
-    uint32_t current_block_num = 1;
+  uint32_t current_block_num = 1;
   uint8_t prev_cyphertext[BLOCK_SIZE];
 
   while (current_block_num <= num_data_blocks) {
@@ -411,18 +414,19 @@ uint8_t *Crypter::CFB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   }
 
   // Erase trailing plaintext block
-  memset(&buffer[current_block_num * BLOCK_SIZE], 0, BLOCK_SIZE);
+  //memset(&buffer[current_block_num * BLOCK_SIZE], 0, BLOCK_SIZE);
 
   #ifdef DEBUG
     std::cout << "Encrypted data: \n";
     for (int i = 0; i < num_blocks; i++){
-      Tests::phex(&buffer[i*BLOCK_SIZE]);
+      phex(&buffer[i*BLOCK_SIZE]);
     }
   #endif
 
   // Clear the plaintext string and key
   memset(data, 0, (*data_len));
   memset(key, 0, BLOCK_SIZE);
+  delete[] key;
 
   (*data_len) = num_blocks * BLOCK_SIZE;
   data = buffer;
@@ -431,34 +435,41 @@ uint8_t *Crypter::CFB_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
 
 uint8_t *Crypter::CFB_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase) {
   if (*data_len <= 0) {
-      return nullptr; // Can't decrypt no data
+      return nullptr;  // Can't decrypt no data
   }
-    uint32_t original_data_len = *data_len;
-    uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
+
+  uint32_t original_data_len = *data_len;
+  uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
   uint8_t *key = derive_key(passphrase);
+
+  uint8_t temp_buffer[*data_len];
+  uint8_t* temp = &temp_buffer[0];
 
   #ifdef DEBUG
     std::cout << "\n\nInput data: \n";
     for (int i = 0; i < num_data_blocks + 1; i++){
-      Tests::phex(&data[i*BLOCK_SIZE]);
+      phex(&data[i*BLOCK_SIZE]);
     }
   #endif
 
-    uint32_t current_block_num = 1;
+  uint32_t current_block_num = 1;
 
   // We don't need the initialization vector after this point so we can overwrite it
   while (current_block_num <= num_data_blocks) {
     AES128_ECB_encrypt(&data[current_block_num * BLOCK_SIZE - BLOCK_SIZE],
+                       &temp[current_block_num * BLOCK_SIZE - BLOCK_SIZE],
                        key); // Yes, this is encryption, see the CFB spec
-    xor_together(&data[current_block_num * BLOCK_SIZE - BLOCK_SIZE], &data[current_block_num * BLOCK_SIZE]);
+    xor_together(&temp[current_block_num * BLOCK_SIZE - BLOCK_SIZE], &data[current_block_num * BLOCK_SIZE]);
 
     current_block_num++;
   }
-  memset(&data[current_block_num * BLOCK_SIZE], 0, BLOCK_SIZE);
+
+  // Clear old cyphertext
+  memset(&data[(current_block_num - 1) * BLOCK_SIZE], 0, BLOCK_SIZE);
+  memcpy(&data[BLOCK_SIZE], temp, *data_len);
 
   // PKCS padding means the last value in the buffer is the number of padded bytes
-  // There is an additional copy of the last cyphertext block at the end
-    uint32_t padding_len = data[(*data_len) - BLOCK_SIZE - 1];
+  uint32_t padding_len = data[(*data_len) - 1];
 
   // Update data_len to be length of the original message
   // Again extra block of cyphertext is left at end
@@ -466,33 +477,31 @@ uint8_t *Crypter::CFB_decrypt(uint8_t *data, uint32_t *data_len, char *passphras
 
 
   #ifdef DEBUG
-    printf("%i\n", (int)padding_len);
     std::cout << "Output data: \n";
     // We overwrite the IV block here
-    for (int i = 0; i < num_data_blocks; i++){
-      Tests::phex(&data[i*BLOCK_SIZE]);
+    for (int i = 0; i < num_data_blocks + 1; i++){
+      phex(&data[i*BLOCK_SIZE]);
     }
   #endif
 
   // Perform CRC verification
-  uint32_t crc_value = unpack_crc_32(data, *data_len);
-  if (crc_value != Crypter::calculate_crc_32(data + BLOCK_SIZE, (*data_len) - BLOCK_SIZE)) {
-    std::cout << crc_value << " " << Crypter::calculate_crc_32(data, (*data_len));
-      return nullptr;
+  uint32_t crc_value = unpack_crc_32(data + BLOCK_SIZE, *data_len);
+  if (crc_value != Crypter::calculate_crc_32(data + BLOCK_SIZE, (*data_len))) {
+    std::cout << std::endl << crc_value << " " << Crypter::calculate_crc_32(data + BLOCK_SIZE, (*data_len)) << std::endl;
+    *data_len = 0;
+    return nullptr;
   }
-
-  *data_len = *data_len - BLOCK_SIZE; // Don't include the IV in the length
 
   // Copy data minus IV and CRC/padding to new buffer to avoid memory leak or offset
-  uint8_t *plaintext_buffer = new uint8_t[*data_len];
-  for (int i = 0; i < (*data_len); i++) {
+  uint8_t *plaintext_buffer = new uint8_t[*data_len]();
+  for (uint i = 0; i < (*data_len); i++) {
     plaintext_buffer[i] = data[BLOCK_SIZE + i];
   }
-
 
   // Clear original data buffer
   memset(data, 0, (num_data_blocks + 1) * BLOCK_SIZE);
   // Don't delete data buffer because it was allocated outside this library
+  delete[] key;
 
   return plaintext_buffer;
 }

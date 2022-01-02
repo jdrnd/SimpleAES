@@ -49,7 +49,7 @@ In progress
    - Next `n` blocks: encrypted data, followed by 4 bytes CRC, then padded according to PKCS \#7.
 
 
-### Resources used:
+### Resources:
 
   - Original AES ECB implementation from https://github.com/kokke/tiny-AES128-C, with modifications, as per the terms of the included `lib/unlicense.txt` file.
 
@@ -72,12 +72,4 @@ To print a buffer of length 96 as hex using gdb: `x /96xb buffer`
 
 ### License 
 
-Licensed under the MIT License
-
-Copyright 2018 Joel Ruhland
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Licensed under the MIT License, see include `LICENSE` file.

@@ -1,8 +1,6 @@
 #include <cstdint>
 #include <cstring>
 
-#include "../test/test.h"
-
 #ifndef CRYPTER_H
 #define CRYPTER_H
 
@@ -12,10 +10,8 @@
 #define CRC_POLY 0xEDB88320
 #define CRC_LEN 4
 
-//#define DEBUG
 
 class Crypter {
-  friend class Tests;
 
   // Utils
   static uint32_t calculate_crc_32(uint8_t *crc_data, uint32_t crc_data_len);
@@ -27,14 +23,15 @@ class Crypter {
   // Helpers
   static uint32_t calculate_num_blocks(uint32_t *data_len);
 
-    static uint8_t calculate_padding_len(uint32_t *data_len, uint32_t num_blocks);
+  static uint8_t calculate_padding_len(uint32_t *data_len, uint32_t num_blocks);
   static void xor_together(uint8_t* block1, uint8_t* block2);
   static uint8_t* copy_block(uint8_t* block);
   static void copy_block(uint8_t* block, uint8_t* destination);
   static void move_block(uint8_t* block, uint8_t* destination);
 
+  static void phex(uint8_t* str);
 
-public:
+ public:
   Crypter();
 
   // TODO modify these to return structs

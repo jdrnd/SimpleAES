@@ -1,11 +1,8 @@
-#include <cstdint>
-#include <iostream>
-#include <cassert>
+#include <gtest/gtest.h>
 
-#include "test.h"
-#include "../src/crypter.h"
+#include "src/crypter.h"
 
-void Tests::test_pcbc(void) {
+TEST(CRYPTER, TEST_PCBC) {
   std::cout << "Testing PCBC: \n";
 
   uint8_t key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
@@ -18,7 +15,7 @@ void Tests::test_pcbc(void) {
 
   uint8_t* encrypted_data = Crypter::PCBC_encrypt(input_data, data_len, (char*) &key[0]);
 
-  assert(*data_len == 96); // IV + 64 data + CRC + padding
+  EXPECT_EQ(*data_len, 96); // IV + 64 data + CRC + padding
 
   uint8_t same_key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
   uint8_t* plaintext_data = Crypter::PCBC_decrypt(encrypted_data, data_len, (char*) &same_key[0]);
@@ -26,7 +23,7 @@ void Tests::test_pcbc(void) {
 
   assert(*data_len == 64);
   uint8_t expected[] = {0x76, 0x49, 0xab, 0xac, 0x81, 0x19};
-  assert(0 == strncmp((char*)expected, (char*)plaintext_data, 6));
+  EXPECT_EQ(strncmp((char*)expected, (char*)plaintext_data, 6), 0);
   std::cout << "PCBC Tests Passed\n\n";
 }
 

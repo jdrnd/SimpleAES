@@ -1,8 +1,7 @@
 #include <cstdlib>
 
 #include "crypter.h"
-#include "aes.h"
-#include "test.h"
+#include "lib/aes.h"
 #include <iostream>
 
 
@@ -26,8 +25,7 @@ uint32_t Crypter::calculate_crc_32(uint8_t *data, uint32_t length) {
 // Packs the 32bit crc value into 4 8-bit integers in buffer at a given position
 void Crypter::pack_crc_32(uint8_t* buffer, uint32_t crc, uint32_t position) {
   for (int i = 0; i<CRC_LEN; i++){
-      buffer[position + i] = (uint8_t) (crc >> (uint32_t) (32 - 8 * (i + 1))) & 0xFF;
-    std::cout << buffer[position + i];
+    buffer[position + i] = (uint8_t) (crc >> (uint32_t) (32 - 8 * (i + 1))) & 0xFF;
   }
 }
 
@@ -45,23 +43,22 @@ void Crypter::generate_and_fill_IV(uint8_t* data_buffer) {
   for (int i=0; i< BLOCK_SIZE; i++) {
     data_buffer[i] = rand() % UINT8_MAX;
   }
-  Tests::phex(data_buffer);
 }
 
 // TODO replace this with a REAL key derivation function
 uint8_t* Crypter::derive_key(char* passphrase) {
-  uint8_t* key_buffer = new uint8_t[BLOCK_SIZE];
+  uint8_t* key_buffer = new uint8_t[BLOCK_SIZE]();
 
-    uint32_t passphrase_len;
-    if (passphrase != nullptr) {
+  uint32_t passphrase_len;
+  if (passphrase != nullptr) {
     passphrase_len = strlen(passphrase);
-  }
-  else {
+  } else {
     passphrase_len = 0;
   }
 
   for (uint8_t i = 0; i < passphrase_len; i++) {
-      key_buffer[i] = (uint8_t) passphrase[i];
+    if (i >= BLOCK_SIZE) { break; }
+    key_buffer[i] = (uint8_t) passphrase[i];
   }
 
   // Use PKCS-style padding here because why not
@@ -72,4 +69,13 @@ uint8_t* Crypter::derive_key(char* passphrase) {
   memset(passphrase, 0, passphrase_len);
 
   return key_buffer;
+}
+
+void Crypter::phex(uint8_t* str)
+{
+    uint8_t i;
+    for(i = 0; i < BLOCK_SIZE; ++i){
+        printf("%.2x", str[i]);
+    }
+    printf("\n");
 }

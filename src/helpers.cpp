@@ -20,7 +20,7 @@ void Crypter::xor_together(uint8_t* block1, uint8_t* block2) {
 }
 
 uint8_t* Crypter::copy_block(uint8_t *block) {
-    auto *new_block = new uint8_t[BLOCK_SIZE];
+  auto *new_block = new uint8_t[BLOCK_SIZE]();
   for (int i=0; i<BLOCK_SIZE; i++) {
     new_block[i] = block[i];
   }
