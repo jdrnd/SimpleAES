@@ -25,12 +25,12 @@ void Tests::test_crc(void) {
 void Tests::test_key_derivation(void) {
   std::cout << "Key derivation: ";
   uint8_t expected[] = {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10};
-  uint8_t* key = Crypter::derive_key((char*)"");
+  uint8_t* key = Crypter::derive_key((char*)"", 0);
   assert(!memcmp(key, expected, BLOCK_SIZE)); // correct comparision returns 0
 
   uint8_t expected2[] = {'p', 'a', 's', 's', 'w', 'o', 'r', 'd', 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08};
   char pass[] = {'p', 'a', 's', 's', 'w', 'o', 'r', 'd', '\0'};
-  key = Crypter::derive_key(pass);
+  key = Crypter::derive_key(pass, BLOCK_SIZE);
   assert(!memcmp(key, expected2, BLOCK_SIZE));
   std::cout << "SUCCESS!\n";
 }

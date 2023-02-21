@@ -1,23 +1,29 @@
-#include <cstdint>
-#include <cstring>
-
 #ifndef CRYPTER_H
 #define CRYPTER_H
 
-#define BLOCK_SIZE 16
+#include <cstdint>
+#include <cstring>
+#include <vector>
 
-// 32 bit CRC polynomial from the ethenet standard
-#define CRC_POLY 0xEDB88320
-#define CRC_LEN 4
+#include "types.h"
+#include "key.hpp"
 
+#include "absl/types/span.h"
+
+using absl::Span;
 
 class Crypter {
 
   // Utils
   static uint32_t calculate_crc_32(uint8_t *crc_data, uint32_t crc_data_len);
+  static uint32_t calculate_crc_32(Span<const byte> data);
+
   static void pack_crc_32(uint8_t* buffer, uint32_t crc, uint32_t position);
+
+  static uint32_t unpack_crc_32(Span<const byte> data);
   static uint32_t unpack_crc_32(uint8_t* buffer, uint32_t position);
-  static uint8_t* derive_key(char* passphrase);
+
+  static uint8_t* derive_key(char* passphrase, uint8_t passphrase_len);
   static void generate_and_fill_IV(uint8_t* data_buffer);
 
   // Helpers
@@ -29,7 +35,7 @@ class Crypter {
   static void copy_block(uint8_t* block, uint8_t* destination);
   static void move_block(uint8_t* block, uint8_t* destination);
 
-  static void phex(uint8_t* str);
+  static void phex(const uint8_t* str);
 
  public:
   Crypter();
@@ -37,20 +43,22 @@ class Crypter {
   // TODO modify these to return structs
   // (after previous) TODO remove common code into pipeline methods eg. prepare_data
   // Assume data is passed in as a C-style string
-  static uint8_t *
-  ECB_encrypt(uint8_t *data, uint32_t *data_len, char *passphrase); // Returns pointer to encrypted data, length updated
-    static uint8_t *ECB_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
+  static std::vector<byte> ECB_encrypt(Span<const byte> data,
+                              std::string passphrase); // Returns pointer to encrypted data, length updated
+  static std::vector<byte> ECB_decrypt(Span<const byte> data,
+                              std::string passphrase);
 
-    static uint8_t *CBC_encrypt(uint8_t *data, uint32_t *data_len,
-                                char *passphrase); // Returns pointer to encrypted data, length updated
-    static uint8_t *CBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
+  static uint8_t *CBC_encrypt(uint8_t *data, uint32_t *data_len,
+                              char *passphrase); // Returns pointer to encrypted data, length updated
+  static uint8_t *CBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
 
-    static uint8_t *PCBC_encrypt(uint8_t *data, uint32_t *data_len,
-                                 char *passphrase);  // Returns pointer to encrypted data, length updated
-    static uint8_t *PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
-
-    static uint8_t *CFB_encrypt(uint8_t *data, uint32_t *data_len,
+  static uint8_t *PCBC_encrypt(uint8_t *data, uint32_t *data_len,
                                 char *passphrase);  // Returns pointer to encrypted data, length updated
-    static uint8_t *CFB_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
+  static uint8_t *PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphrase);
+
+  static std::vector<byte> CFB_encrypt(Span<const byte> data,
+                              std::string passphrase);  // Returns pointer to encrypted data, length updated
+  static uint8_t *CFB_decrypt(Span<const byte> data,
+                              std::string passphrase);
 };
 #endif

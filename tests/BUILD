@@ -13,7 +13,7 @@ cc_test(
 cc_test(
   name = "test_cfb",
   size = "small",
-  srcs = ["cfb.cpp"],
+  srcs = ["cfb.cpp", "crypter_test.hpp"],
   deps = [
     "@com_google_googletest//:gtest_main",
     "//src:crypter",
@@ -23,10 +23,11 @@ cc_test(
 cc_test(
   name = "test_ecb",
   size = "small",
-  srcs = ["ecb.cpp"],
+  srcs = ["ecb.cpp", "crypter_test.hpp"],
   deps = [
     "@com_google_googletest//:gtest_main",
     "//src:crypter",
+
   ],
 )
 

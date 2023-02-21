@@ -1,11 +1,11 @@
 AES Code taken From [https://github.com/kokke/tiny-AES128-C], with modifications for C++ usage and tests
 
-Modifications: removed the CBC implementation as I do that myself, and modified ECB to encrypt/decrypt in place.
+*Modifications*: removed the CBC implementation as I do that myself, and modified ECB to encrypt/decrypt in place.
 ### Tiny AES128 in C
 
-This is a small and portable implementation of the AES128 ECB and CBC encryption algorithms written in C.
+This is a small and portable implementation of the AES128 ECB encryption algorithm written in C.
 
-The API that we're using here is very simple and looks like this (Uses C99 `<cstdint>`-style annotated types):
+The API that we're using here is very simple and looks like this:
 
 ```C
 // Modified to encrypt/decrypt in-place so output buffer === input buffer
