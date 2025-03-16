@@ -9,4 +9,4 @@
 
 using byte = unsigned char;
 
-#endif
+#endif // TYPES_H

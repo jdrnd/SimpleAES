@@ -58,7 +58,7 @@ class Crypter {
 
   static std::vector<byte> CFB_encrypt(Span<const byte> data,
                               std::string passphrase);  // Returns pointer to encrypted data, length updated
-  static uint8_t *CFB_decrypt(Span<const byte> data,
+  static uint8_t *CFB_decrypt(Span<byte> data,
                               std::string passphrase);
 };
 #endif

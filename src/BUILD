@@ -13,7 +13,7 @@ cc_library(
   ],
   deps = [
     "//lib:aes",
-    "@com_google_absl//absl/types:span"
+    "@abseil-cpp//absl/types:span"
   ],
   visibility = ["//visibility:public"],
 )

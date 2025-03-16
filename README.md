@@ -32,21 +32,24 @@ In progress
   - [ ] Move to a real key derivation function
   - [ ] Use a CSPRNG instead of the language's builtin RNG  ¯\_(ツ)_/¯
   - [ ] File Encryption
-  - [ ] Move to the Google C++ testing framework (https://github.com/google/googletest)
+  - [x] Move to the Google C++ testing framework (https://github.com/google/googletest)
   - [ ] Helper functions to en/decrypt other C++ data types/structures
   - [x] Decryption verification (how do we know when decryption succeeds vs fails?)
-        
-        Uses a 32-bit CRC that we encrypt along with the plaintext
+    - Uses a 32-bit CRC that we encrypt along with the plaintext
   - [x] ECB support for arbitrary length
     - [x] PKCS #7 padding
   - [x] CBC mode
     - [x] IV generation/extraction
+  - [x] PCBC mode
+  - [x] CFB mode
+  - [ ] CTR mode
+  - [ ] OFB mode
 
 ##### Raw encrypted data:
 (Note this will be refactored soon)
    - First 16 byte block: initialization vector/nounce
         Not sure if we should be putting these "known bytes" at the beginning or end of the data.
-   - Next `n` blocks: encrypted data, followed by 4 bytes CRC, then padded according to PKCS \#7.
+   - Rest of message: encrypted data, followed by 4 bytes CRC, then padded according to PKCS \#7.
 
 
 ### Resources:

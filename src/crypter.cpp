@@ -6,6 +6,7 @@
 
 #include "crypter.h"
 #include "lib/aes.h"
+#include "types.h"
 
 #define DEBUG
 
@@ -32,8 +33,8 @@ uint8_t *Crypter::CBC_encrypt(uint8_t *data, uint32_t *data_len, char *passphras
   uint8_t* key = derive_key(passphrase, BLOCK_SIZE);
   memset(key, 0, strlen(passphrase));
 
-    uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
-    uint32_t num_data_blocks = num_blocks - 1;
+  uint32_t num_blocks = calculate_num_blocks(data_len) + 1; // additional block to store initialization vector
+  uint32_t num_data_blocks = num_blocks - 1;
   uint8_t padding_len = Crypter::calculate_padding_len(data_len, num_data_blocks);
   auto *buffer = new uint8_t[num_blocks * BLOCK_SIZE]();
 
@@ -151,7 +152,7 @@ std::vector<byte> Crypter::ECB_encrypt(Span<const byte> data,
   if (data.size() <= 0) {
       return {};
   }
-  Key key{passphrase};
+  Key key{Key::CreateSecure(passphrase)};
 
   // this relies on integer division, adds additional block for padding if data length is exact multiple of block length
   uint32_t num_blocks = (data.size() + CRC_LEN) / BLOCK_SIZE + 1;
@@ -212,7 +213,7 @@ std::vector<byte> Crypter::ECB_decrypt(Span<const byte> data,
 
   // Assuming the data is encrypted using this library, data length will always be an exact multiple of block length
   uint32_t num_blocks = data.size() / BLOCK_SIZE;
-  Key key{passphrase};
+  Key key{Key::CreateSecure(passphrase)};
 
     for (uint32_t i = 0; i < num_blocks; i++) {
     AES128_ECB_decrypt(&output[i*BLOCK_SIZE], key.data());
@@ -307,8 +308,8 @@ uint8_t *Crypter::PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphra
       return nullptr; // Can't decrypt no data
   }
 
-    uint32_t original_data_len = *data_len;
-    uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
+  uint32_t original_data_len = *data_len;
+  uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
   uint8_t *key = derive_key(passphrase, BLOCK_SIZE);
 
   #ifdef DEBUG
@@ -375,13 +376,15 @@ uint8_t *Crypter::PCBC_decrypt(uint8_t *data, uint32_t *data_len, char *passphra
 
 std::vector<uint8_t> Crypter::CFB_encrypt(Span<const byte> data,
                                            std::string passphrase) {
+  printf("%lu\n", data.size());
   if (data.size() <= 0) {
       return {};
   }
-  Key key{passphrase};
+  Key key{Key::CreateSecure(passphrase)};
 
   // this relies on integer division, adds additional block for padding if data length is exact multiple of block length
-  uint32_t num_blocks = (data.size() + CRC_LEN) / BLOCK_SIZE + 1;
+  // plus a block for the initialization vector
+  uint32_t num_blocks = (data.size() + CRC_LEN) / BLOCK_SIZE + 2;
   uint32_t num_data_blocks = num_blocks - 1;
   uint32_t output_data_size = num_blocks*BLOCK_SIZE;
 
@@ -450,21 +453,19 @@ std::vector<uint8_t> Crypter::CFB_encrypt(Span<const byte> data,
   return buffer;
 }
 
-uint8_t *Crypter::CFB_decrypt(Span<const byte> data,
+uint8_t *Crypter::CFB_decrypt(Span<byte> data,
                               std::string passphrase) {
   if (data.size() <= 0) {
       return nullptr;  // Can't decrypt no data
   }
 
-  uint32_t size = data.size();
-  uint32_t* data_len = &size;
+  Key key{Key::CreateSecure(passphrase)};
+  uint32_t const dataSize = data.size();
 
-  uint32_t original_data_len = *data_len;
-  uint32_t num_data_blocks = (original_data_len / BLOCK_SIZE) - 1;
-  
-  Key key{passphrase};
+  // Ignore the IV block at the start
+  uint32_t num_data_blocks = (dataSize / BLOCK_SIZE) - 1;
 
-  uint8_t temp_buffer[*data_len];
+  uint8_t* temp_buffer = new uint8_t[dataSize];
   uint8_t* temp = &temp_buffer[0];
 
   #ifdef DEBUG
@@ -480,21 +481,21 @@ uint8_t *Crypter::CFB_decrypt(Span<const byte> data,
   while (current_block_num <= num_data_blocks) {
     AES128_ECB_encrypt(&data[current_block_num * BLOCK_SIZE - BLOCK_SIZE],
                        &temp[current_block_num * BLOCK_SIZE - BLOCK_SIZE],
-                       key.data()); // Yes, this is encryption, see the CFB spec
+                       key.data()); // Yes, the CFB decryption stage uses AES encryption, see the CFB spec for more details
     Xor_together(&temp[current_block_num * BLOCK_SIZE - BLOCK_SIZE],  data.subspan(current_block_num * BLOCK_SIZE, current_block_num * BLOCK_SIZE + BLOCK_SIZE));
 
     current_block_num++;
   }
 
   // Clear old cyphertext
-  //memcpy(&data[BLOCK_SIZE], temp, original_data_len);
+  memcpy(data.data() + BLOCK_SIZE, temp, dataSize);
 
   // PKCS padding means the last value in the buffer is the number of padded bytes
-  uint32_t padding_len = data[(*data_len) - 1];
+  uint32_t padding_len = data[dataSize - 1];
 
   // Update data_len to be length of the original message
   // Again extra block of cyphertext is left at end
-  *data_len = (*data_len) - padding_len - CRC_LEN - BLOCK_SIZE;
+  uint32_t originalDataSize = dataSize - padding_len - CRC_LEN - BLOCK_SIZE;
 
 
   #ifdef DEBUG
@@ -506,21 +507,20 @@ uint8_t *Crypter::CFB_decrypt(Span<const byte> data,
   #endif
 
   // Perform CRC verification
-  size_t crc_start_idx = BLOCK_SIZE + *data_len;
+  size_t crc_start_idx = BLOCK_SIZE + originalDataSize;
   Span<const byte> crc_data = data.subspan(crc_start_idx, crc_start_idx+4);
 
-  Span<const byte> raw_data = data.subspan(BLOCK_SIZE, BLOCK_SIZE + *data_len);
+  Span<const byte> raw_data = data.subspan(BLOCK_SIZE, BLOCK_SIZE + originalDataSize);
 
   uint32_t crc_value = unpack_crc_32(crc_data);
   if (crc_value != Crypter::calculate_crc_32(raw_data)) {
     std::cout << std::endl << crc_value << " " << Crypter::calculate_crc_32(raw_data) << std::endl;
-    *data_len = 0;
     return nullptr;
   }
 
   // Copy data minus IV and CRC/padding to new buffer to avoid memory leak or offset
-  uint8_t *plaintext_buffer = new uint8_t[*data_len]();
-  for (uint i = 0; i < (*data_len); i++) {
+  uint8_t *plaintext_buffer = new uint8_t[originalDataSize]();
+  for (uint i = 0; i < originalDataSize; i++) {
     plaintext_buffer[i] = data[BLOCK_SIZE + i];
   }
 

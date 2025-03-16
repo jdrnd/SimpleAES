@@ -10,6 +10,5 @@ TEST_F(CrypterTest, TEST_ECB) {
   EXPECT_EQ(encrypted_data.size(), 80);
 
   auto plaintext_data = Crypter::ECB_decrypt(encrypted_data, passphrase);
-  printf("3\n");
   (void) plaintext_data;
 }

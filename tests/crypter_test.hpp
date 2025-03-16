@@ -3,8 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "src/crypter.h"
-
 class CrypterTest : public ::testing::Test
 {
 protected:
